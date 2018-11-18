@@ -1,10 +1,10 @@
 # config valid for current version and patch releases of Capistrano
+ENV.update YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))
 lock "~> 3.11.0"
 
-ENV.update YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))
 
 # Change these
-server ENV['TRADING_CHART_SERVER'], user: ENV['TRADING_CHART_USER_DEPLOY'], port: 22, roles: [:web, :app, :db], primary: true
+server ENV['TRADING_CHART_SERVER'], port: 22, roles: [:web, :app, :db], primary: true
 
 set :stages, %w(production staging)
 
@@ -18,7 +18,6 @@ set :rbenv_type, :user # or :system, depends on your rbenv setup
 set :use_sudo,        false
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/var/www/#{fetch(:application)}"
-# set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
 set :puma_state,      "#{shared_path}/tmp/pids/puma.state"
 set :puma_pid,        "#{shared_path}/tmp/pids/puma.pid"
@@ -39,7 +38,7 @@ set :branch, ENV['TRADING_CHART_REPO_BRANCH']
 set :keep_releases, 5
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/config.yml config/secrets.yml config/database.yml}
+set :linked_files, %w{config/config.yml config/database.yml}
 set :linked_dirs,  %w{log tmp vendor public}
 
 namespace :puma do
