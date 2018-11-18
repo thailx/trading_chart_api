@@ -4,7 +4,7 @@ lock "~> 3.11.0"
 ENV.update YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))
 
 # Change these
-server ENV['TRADING_CHART_SERVER'], port: 22, roles: [:web, :app, :db], primary: true
+server ENV['TRADING_CHART_SERVER'], user: ENV['TRADING_CHART_USER_DEPLOY'], port: 22, roles: [:web, :app, :db], primary: true
 
 set :stages, %w(production staging)
 

@@ -31,5 +31,9 @@ module TradingChart
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.before_configuration do
+      env_file = File.join(Rails.root, 'config', 'config.yml')
+      YAML.load_file(File.open(env_file)).each { |key, value| ENV[key.to_s] = value } if File.exist?(env_file)
+    end
   end
 end
