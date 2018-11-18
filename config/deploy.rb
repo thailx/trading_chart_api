@@ -78,6 +78,8 @@ namespace :deploy do
   desc 'Nginx'
   task :nginx do
     on roles(:all) do
+      execute "sudo ln -nfs /var/www/trading_chart_api/current/config/nginx.conf /etc/nginx/sites-enabled/trading_chart_api"
+
       execute "sudo service nginx restart"
     end
   end
