@@ -10,7 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_13_125050) do
+ActiveRecord::Schema.define(version: 2018_11_17_105025) do
+
+  create_table "crytocurrencies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "cryto_name"
+    t.string "symbol"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "portfolio_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "portfolio_id"
+    t.bigint "crytocurrency_id"
+    t.index ["crytocurrency_id"], name: "index_portfolio_items_on_crytocurrency_id"
+    t.index ["portfolio_id"], name: "index_portfolio_items_on_portfolio_id"
+  end
+
+  create_table "portfolios", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_portfolios_on_user_id"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -42,4 +67,7 @@ ActiveRecord::Schema.define(version: 2018_11_13_125050) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "portfolio_items", "crytocurrencies"
+  add_foreign_key "portfolio_items", "portfolios"
+  add_foreign_key "portfolios", "users"
 end

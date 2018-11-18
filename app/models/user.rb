@@ -5,4 +5,5 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :rememberable,
          :trackable, :validatable, authentication_keys: [:login]
   include DeviseTokenAuth::Concerns::User
+  has_many :portfolios
 end

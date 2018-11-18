@@ -1,0 +1,2 @@
+class Crytocurrency < ApplicationRecord
+end

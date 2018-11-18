@@ -5,5 +5,15 @@ Rails.application.routes.draw do
   }
   namespace :user do
     post 'auth/sign_up', to: 'users#create'
+
+    get 'all_users', to: "users#index"
+    get ':id', to: 'users#show'
+    resources :portfolios, only: [:index, :create, :show] do
+      member do
+        post :add_portfolio_item
+      end
+    end
+
+    resources :crytocurrencies, only: :index
   end
 end
