@@ -38,7 +38,7 @@ set :branch, ENV['TRADING_CHART_REPO_BRANCH']
 set :keep_releases, 5
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/config.yml config/database.yml}
+set :linked_files, %w{config/config.yml config/database.yml config/master.key}
 set :linked_dirs,  %w{log tmp vendor public}
 
 namespace :puma do
@@ -67,8 +67,11 @@ namespace :deploy do
     on roles(:all) do
       database = File.join(File.dirname(__FILE__), 'database.yml')
       config_path = File.join(File.dirname(__FILE__), 'config.yml')
+      master_key_path = File.join(File.dirname(__FILE__), 'master.key')
       upload! config_path, "#{shared_path}/config/config.yml"
       upload! database, "#{shared_path}/config/database.yml"
+      upload! master_key_path, "#{shared_path}/config/master.key"
+
     end
   end
 
