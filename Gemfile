@@ -51,6 +51,7 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-sidekiq'
   gem 'capistrano3-puma'
+  gem "faraday"
 end
 
 
