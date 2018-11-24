@@ -7,7 +7,10 @@ class User::PortfoliosController < ApplicationController
     if @portfolio.save
       options = {}
       options[:include] = [:user]
-      render json: PortfolioSerializer.new(@portfolio.includes(:user)).serialized_json
+      status = {
+          status_code: 200
+      }
+      render json: PortfolioSerializer.new(@portfolio.includes(:user), options).serializable_hash.merge(status)
     else
       render json: @portfolio.errors.full_messages, status: 422
     end
@@ -16,12 +19,19 @@ class User::PortfoliosController < ApplicationController
   def show
     options = {}
     options[:include] = [:portfolio_items]
-    render json: PortfolioSerializer.new(@portfolio, options).serialized_json
+    status = {
+        status_code: 200
+    }
+    render json: PortfolioSerializer.new(@portfolio, options).serializable_hash.merge(status)
   end
 
   def index
     @portfolios = Portfolio.all.includes(:user)
-    render json: PortfolioSerializer.new(@portfolios).serialized_json
+    options = {}
+    status = {
+        status_code: 200
+    }
+    render json: PortfolioSerializer.new(@portfolios, options).serializable_hash.merge(status)
   end
 
   def add_portfolio_item
@@ -29,7 +39,10 @@ class User::PortfoliosController < ApplicationController
     if @portfolio_items.save
       options = {}
       options[:include] = [:portfolio_items]
-      render json: PortfolioSerializer.new(@portfolio, options).serialized_json
+      status = {
+          status_code: 200
+      }
+      render json: PortfolioSerializer.new(@portfolio, options).serializable_hash.merge(status)
     else
       render json: {message: "Create portfolio fail"}, status: 422
     end
