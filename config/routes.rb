@@ -5,11 +5,16 @@ Rails.application.routes.draw do
   }
   namespace :user, path: '/' do
     post 'auth/sign_up', to: 'users#create'
-    resources :users, only: [:show, :index]
+    resources :users, only: [:show, :index] do
+      collection do
+        get :get_coin_data
+      end
+    end
 
     resources :portfolios, only: [:index, :create, :show] do
       member do
         post :add_portfolio_item
+        delete :delete_portfolio_item
       end
     end
 

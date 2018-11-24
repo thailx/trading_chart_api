@@ -1,6 +1,10 @@
 class User::CrytocurrenciesController < ApplicationController
   def index
-    @data = Crytocurrency.all.limit(params[:per_page] || 30)
+    if params[:search]
+      @data = Crytocurrency.where('symbol LIKE ?', "%#{params[:symbol]}%")
+    else
+      @data = Crytocurrency.all.limit(params[:per_page] || 30)
+    end
     options = {
         status_code: 200
     }

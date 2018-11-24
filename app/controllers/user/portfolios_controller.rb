@@ -46,7 +46,13 @@ class User::PortfoliosController < ApplicationController
     else
       render json: {message: "Create portfolio fail"}, status: 422
     end
+  end
 
+  def delete_portfolio_item
+    @portfolio.portfolio_items.where(id: params[:portfolio_item_id]).delete_all
+    render json: {
+        message: "Delete successfully"
+    }, status: 200
   end
 
   private
