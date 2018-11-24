@@ -21,8 +21,7 @@ class User::PortfoliosController < ApplicationController
 
   def index
     @portfolios = Portfolio.all.includes(:user)
-    options[:include] = [:user]
-    render json: PortfolioSerializer.new(@portfolio, options).serialized_json
+    render json: PortfolioSerializer.new(@portfolios).serialized_json
   end
 
   def add_portfolio_item
