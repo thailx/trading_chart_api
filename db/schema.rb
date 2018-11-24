@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_162538) do
+ActiveRecord::Schema.define(version: 2018_11_24_144241) do
 
   create_table "crytocurrencies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "cryto_name"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_162538) do
     t.datetime "updated_at", null: false
     t.bigint "portfolio_id"
     t.string "name"
+    t.string "symbol"
     t.index ["portfolio_id"], name: "index_portfolio_items_on_portfolio_id"
   end
 
