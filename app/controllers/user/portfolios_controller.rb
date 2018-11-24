@@ -6,8 +6,8 @@ class User::PortfoliosController < ApplicationController
     @portfolio = Portfolio.new(portfolio_params)
     if @portfolio.save
       options = {}
-      options[:include] = [:portfolio_items]
-      render json: PortfolioSerializer.new(@portfolio).serialized_json
+      options[:include] = [:user]
+      render json: PortfolioSerializer.new(@portfolio.includes(:user)).serialized_json
     else
       render json: @portfolio.errors.full_messages, status: 422
     end
@@ -15,7 +15,13 @@ class User::PortfoliosController < ApplicationController
 
   def show
     options = {}
-    options[:include] = [:portfolio_items, :crytocurrencies]
+    options[:include] = [:portfolio_items]
+    render json: PortfolioSerializer.new(@portfolio, options).serialized_json
+  end
+
+  def index
+    @portfolios = Portfolio.all.includes(:user)
+    options[:include] = [:user]
     render json: PortfolioSerializer.new(@portfolio, options).serialized_json
   end
 
