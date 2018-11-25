@@ -5,12 +5,10 @@ class User::PortfoliosController < ApplicationController
   def create
     @portfolio = Portfolio.new(portfolio_params)
     if @portfolio.save
-      options = {}
-      options[:include] = [:user]
       status = {
           status_code: 200
       }
-      render json: PortfolioSerializer.new(@portfolio.includes(:user), options).serializable_hash.merge(status)
+      render json: PortfolioSerializer.new(@portfolio).serializable_hash.merge(status)
     else
       render json: @portfolio.errors.full_messages, status: 422
     end

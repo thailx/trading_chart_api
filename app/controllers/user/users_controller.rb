@@ -60,7 +60,7 @@ class User::UsersController < ApplicationController
       market = []
       data["Data"].each do |val|
         next if val['exchange'].empty?
-         market << "#{val['exchange']}:#{crypto.symbol}USD"
+         market << "#{val['exchange']}:#{crypto.symbol}/USD"
       end
       crypto.update(market: market)
     end
