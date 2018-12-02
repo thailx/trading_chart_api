@@ -54,7 +54,7 @@ class User::PortfoliosController < ApplicationController
   end
 
   def get_sum_of_day
-    all_symbols = @portfolio.portfolio_items.pluck(:symbol).uniq
+    all_symbols = @portfolio.portfolio_items.pluck(:symbol_crypto).uniq
     if all_symbols.empty?
       return render json: {message: "Now portfolio is empty"}, status: 200
     end
@@ -100,6 +100,6 @@ class User::PortfoliosController < ApplicationController
   end
 
   def portfolio_items_params
-    params.require(:portfolio_item).permit(:name, :symbol)
+    params.require(:portfolio_item).permit(:name, :symbol, :symbol_crypto)
   end
 end
