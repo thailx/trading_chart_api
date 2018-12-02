@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       member do
         post :add_portfolio_item
         delete :delete_portfolio_item
+        get :get_sum_of_day
       end
     end
 

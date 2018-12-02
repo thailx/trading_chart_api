@@ -1,6 +1,6 @@
 class User::PortfoliosController < ApplicationController
   # before_action :authenticate_user!
-  before_action :find_portfolio, only: [:show, :add_portfolio_item]
+  before_action :find_portfolio, only: [:show, :add_portfolio_item, :get_sum_of_day]
 
   def create
     @portfolio = Portfolio.new(portfolio_params)
@@ -50,6 +50,41 @@ class User::PortfoliosController < ApplicationController
     @portfolio.portfolio_items.where(id: params[:portfolio_item_id]).delete_all
     render json: {
         message: "Delete successfully"
+    }, status: 200
+  end
+
+  def get_sum_of_day
+    all_symbols = @portfolio.portfolio_items.pluck(:symbol).uniq
+    if all_symbols.empty?
+      return render json: {message: "Now portfolio is empty"}, status: 200
+    end
+    conn = Faraday.new(:url => 'https://min-api.cryptocompare.com') do |faraday|
+      faraday.request  :url_encoded
+      faraday.response :logger
+      faraday.adapter  Faraday.default_adapter
+    end
+    response = conn.get do |req|
+      req.url "/data/pricemultifull?fsyms=#{all_symbols.join(',')}&tsyms=USD&api_key=cb9f2cbd3191be2732b45facb609f2638d091fcdc818433aea6e4c626457cd00"
+    end
+    data = JSON.parse(response.body)
+    result = {
+      sum_of_day: 0,
+      change_percent: 0,
+      market_cap: 0
+    }
+
+    change_price = 0
+
+    data["RAW"].values.each do |item|
+      result[:sum_of_day] += item["USD"]["PRICE"]
+      result[:market_cap] += item["USD"]["MKTCAP"]
+      change_price += item["USD"]["CHANGEDAY"]
+    end
+
+    result[:change_percent] = change_price * 100 /result[:sum_of_day]
+
+    render json: {
+        data: result
     }, status: 200
   end
 
