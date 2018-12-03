@@ -34,6 +34,10 @@ gem 'devise_token_auth'
 # Serializer
 gem 'fast_jsonapi'
 
+# HTTP Party
+gem 'faraday'
+
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -51,7 +55,6 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-sidekiq'
   gem 'capistrano3-puma'
-  gem "faraday"
 end
 
 
