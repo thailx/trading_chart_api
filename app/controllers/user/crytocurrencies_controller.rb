@@ -63,7 +63,10 @@ class User::CrytocurrenciesController < ApplicationController
     ORDER BY sum_market_cap DESC
     LIMIT 30").to_a
     coins_array = []
-    data_chart.each { |val| coins_array << val["symbol"] }
+    data_chart.each do |val|
+      val["symbol"] = "IOTA" if val["symbol"] == "MIOTA"
+      coins_array << val["symbol"]
+    end
     conn = Faraday.new(:url => 'https://min-api.cryptocompare.com') do |faraday|
       faraday.request  :url_encoded
       faraday.response :logger
@@ -74,6 +77,7 @@ class User::CrytocurrenciesController < ApplicationController
     end
     current_value = JSON.parse(response.body)
     data_chart.each do |val|
+      val["symbol"] = "IOTA" if val["symbol"] == "MIOTA"
       current_price = current_value["RAW"].has_key?(val["symbol"]) ? current_value["RAW"][val["symbol"]]["USD"]["PRICE"] : nil
       val.merge!({ current_price: current_price})
     end
