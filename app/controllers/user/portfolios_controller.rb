@@ -1,6 +1,6 @@
 class User::PortfoliosController < ApplicationController
   # before_action :authenticate_user!
-  before_action :find_portfolio, only: [:show, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
+  before_action :find_portfolio, only: [:show, :data_for_each_day_chart1_portfolio, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
 
   def create
     @portfolio = Portfolio.new(portfolio_params)
@@ -89,10 +89,11 @@ class User::PortfoliosController < ApplicationController
   end
 
   def data_for_each_day_chart1_portfolio
-    data_chart = ActiveRecord::Base.connection.exec_query("SELECT SUM(`crypto_trading_infos`.`market_cap`) AS sum_market_cap, date(created_at) AS date_created_at FROM `crypto_trading_infos` WHERE `crypto_trading_infos`.`cryto_id` IN (#{Crytocurrency.all.pluck(:id).join(',')}) GROUP BY date(created_at)").to_a
-    # data_chart = CryptoTradingInfo.where(cryto_id: Crytocurrency.all.pluck(:id)).group("date(created_at)").sum(:market_cap)
+    # data_chart = ActiveRecord::Base.connection.exec_query("SELECT SUM(`crypto_trading_infos`.`market_cap`) AS sum_market_cap, date(created_at) AS date_created_at FROM `crypto_trading_infos` WHERE `crypto_trading_infos`.`cryto_id` IN (#{Crytocurrency.all.pluck(:id).join(',')}) GROUP BY date(created_at)")
+    data_chart = CryptoTradingInfo.where(cryto_id: @portfolio.portfolio_items.pluck(:cryto_id)).group("date(created_at)").sum(:market_cap)
     render json: {
-        data: data_chart
+        created_at: data_chart.keys,
+        sum_market_cap: data_chart.values
     }, status: 200
 
   end
@@ -113,6 +114,6 @@ class User::PortfoliosController < ApplicationController
   end
 
   def portfolio_items_params
-    params.require(:portfolio_item).permit(:name, :symbol, :symbol_crypto)
+    params.require(:portfolio_item).permit(:name, :symbol, :symbol_crypto, :cryto_id)
   end
 end
