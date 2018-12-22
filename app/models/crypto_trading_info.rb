@@ -1,0 +1,2 @@
+class CryptoTradingInfo < ApplicationRecord
+end

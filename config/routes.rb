@@ -16,9 +16,15 @@ Rails.application.routes.draw do
         post :add_portfolio_item
         delete :delete_portfolio_item
         get :get_sum_of_day
+        get :data_for_each_day_chart1_portfolio
       end
     end
 
-    resources :crytocurrencies, only: :index
+    resources :crytocurrencies, only: :index do
+      collection do
+        get :get_all_trading_info
+        get :data_for_table_sum_chart
+      end
+    end
   end
 end

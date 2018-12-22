@@ -1,6 +1,6 @@
 class User::PortfoliosController < ApplicationController
   # before_action :authenticate_user!
-  before_action :find_portfolio, only: [:show, :add_portfolio_item, :get_sum_of_day]
+  before_action :find_portfolio, only: [:show, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
 
   def create
     @portfolio = Portfolio.new(portfolio_params)
@@ -47,7 +47,7 @@ class User::PortfoliosController < ApplicationController
   end
 
   def delete_portfolio_item
-    @portfolio.portfolio_items.where(id: params[:portfolio_item_id]).delete_all
+    @portfolio.portfolio_items.where(id: portfolio_item_delete_params[:portfolio_item_id]).delete_all
     render json: {
         message: "Delete successfully"
     }, status: 200
@@ -88,15 +88,28 @@ class User::PortfoliosController < ApplicationController
     }, status: 200
   end
 
+  def data_for_each_day_chart1_portfolio
+    data_chart = ActiveRecord::Base.connection.exec_query("SELECT SUM(`crypto_trading_infos`.`market_cap`) AS sum_market_cap, date(created_at) AS date_created_at FROM `crypto_trading_infos` WHERE `crypto_trading_infos`.`cryto_id` IN (#{Crytocurrency.all.pluck(:id).join(',')}) GROUP BY date(created_at)").to_a
+    # data_chart = CryptoTradingInfo.where(cryto_id: Crytocurrency.all.pluck(:id)).group("date(created_at)").sum(:market_cap)
+    render json: {
+        data: data_chart
+    }, status: 200
+
+  end
+
   private
 
   def find_portfolio
-    @portfolio = Portfolio.find(params[:id])
+    @portfolio = Portfolio.find_by_id(params[:id])
     return render json: { message: "Cannot find portfolio"} if @portfolio.nil?
   end
 
   def portfolio_params
     params.require(:portfolio).permit(:name, :user_id)
+  end
+
+  def portfolio_item_delete_params
+    params.permit(:portfolio_item_id)
   end
 
   def portfolio_items_params
