@@ -40,7 +40,7 @@ class User::CrytocurrenciesController < ApplicationController
         data['market_cap'] = marketcap_90days[i][1]
         data['btc_cost'] = price_btc[i][1]
         data['usd_cost'] = price_usd[i][1]
-        data['created_at'] = (90 - i).days.ago.to_datetime
+        data['created_at'] = Time.at(marketcap_90days[i][0]/1000)
         raw_data << data
       end
       sql_header_insert = "INSERT INTO crypto_trading_infos (market_cap, btc_cost, usd_cost, cryto_id, created_at, updated_at) VALUES "

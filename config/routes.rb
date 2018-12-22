@@ -16,7 +16,7 @@ Rails.application.routes.draw do
         post :add_portfolio_item
         delete :delete_portfolio_item
         get :get_sum_of_day
-        get :data_for_each_day_chart1_portfolio
+        get :data_ninety_days
       end
     end
 
