@@ -62,6 +62,21 @@ class User::CrytocurrenciesController < ApplicationController
     GROUP BY crypto_trading_infos.cryto_id
     ORDER BY sum_market_cap DESC
     LIMIT 30").to_a
+    coins_array = []
+    data_chart.each { |val| coins_array << val["symbol"] }
+    conn = Faraday.new(:url => 'https://min-api.cryptocompare.com') do |faraday|
+      faraday.request  :url_encoded
+      faraday.response :logger
+      faraday.adapter  Faraday.default_adapter
+    end
+    response = conn.get do |req|
+      req.url "/data/pricemultifull?fsyms=#{coins_array.join(',')}&tsyms=USD&api_key=cb9f2cbd3191be2732b45facb609f2638d091fcdc818433aea6e4c626457cd00"
+    end
+    current_value = JSON.parse(response.body)
+    data_chart.each do |val|
+      current_price = current_value["RAW"].has_key?(val["symbol"]) ? current_value["RAW"][val["symbol"]]["USD"]["PRICE"] : nil
+      val.merge!({ current_price: current_price})
+    end
     render json: {
         data: data_chart
     }, status: 200
