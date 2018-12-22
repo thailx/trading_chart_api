@@ -92,8 +92,10 @@ class User::PortfoliosController < ApplicationController
     # data_chart = ActiveRecord::Base.connection.exec_query("SELECT SUM(`crypto_trading_infos`.`market_cap`) AS sum_market_cap, date(created_at) AS date_created_at FROM `crypto_trading_infos` WHERE `crypto_trading_infos`.`cryto_id` IN (#{Crytocurrency.all.pluck(:id).join(',')}) GROUP BY date(created_at)")
     data_chart = CryptoTradingInfo.where(cryto_id: @portfolio.portfolio_items.pluck(:cryto_id)).group("date(created_at)").sum(:market_cap)
     render json: {
-        created_at: data_chart&.keys || [],
-        sum_market_cap: data_chart&.values || []
+        data: {
+            created_at: data_chart&.keys || [],
+            sum_market_cap: data_chart&.values || []
+        }
     }, status: 200
 
   end
