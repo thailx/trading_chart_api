@@ -104,7 +104,7 @@ class User::PortfoliosController < ApplicationController
 
   def find_portfolio
     @portfolio = Portfolio.find_by_id(params[:id])
-    return render json: { message: "Cannot find portfolio"} if @portfolio.nil?
+    return render json: { message: "Cannot find portfolio"}, status: 404 if @portfolio.nil?
   end
 
   def portfolio_params
