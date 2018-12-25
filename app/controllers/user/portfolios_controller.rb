@@ -89,15 +89,16 @@ class User::PortfoliosController < ApplicationController
   end
 
   def data_ninety_days
-    # data_chart = ActiveRecord::Base.connection.exec_query("SELECT SUM(`crypto_trading_infos`.`market_cap`) AS sum_market_cap, date(created_at) AS date_created_at FROM `crypto_trading_infos` WHERE `crypto_trading_infos`.`cryto_id` IN (#{Crytocurrency.all.pluck(:id).join(',')}) GROUP BY date(created_at)")
-    data_chart = CryptoTradingInfo.where(cryto_id: @portfolio.portfolio_items.pluck(:cryto_id)).group("date(created_at)").sum(:market_cap)
+    return render json: { message: "Can't get data 90 days"}, status: 404 unless @portfolio.default_portfolio
+    quantity = QuantityValue.where(portfolio_item_id: @portfolio.portfolio_items.ids).sum(:btc_number)
+    quantity = quantity * params[:invest_number].to_i / 100 if params[:invest_number]
+    btc_cost = CryptoTradingInfo.where(btc_cost: 1).order(created_at: :desc).limit(90).pluck(:created_at, :usd_cost).to_h
     render json: {
         data: {
-            created_at: data_chart&.keys || [],
-            sum_market_cap: data_chart&.values || []
+            created_at: btc_cost&.keys || [],
+            current_invest: btc_cost&.values.map { |v| v * quantity} || []
         }
     }, status: 200
-
   end
 
   private

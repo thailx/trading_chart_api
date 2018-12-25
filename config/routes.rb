@@ -3,7 +3,8 @@ Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks], controllers: {
       sessions: 'devise_token_auth/user_sessions'
   }
-  post 'auth/sign_up', to: 'application#register'
+  post 'auth/sign_up', to: 'user/users#register'
+
   namespace :user, path: '/' do
     resources :users, only: [:show, :index] do
       collection do

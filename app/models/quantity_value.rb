@@ -1,0 +1,3 @@
+class QuantityValue < ApplicationRecord
+
+end

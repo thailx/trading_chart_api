@@ -32,7 +32,6 @@ class User::UsersController < ApplicationController
     render json: UserSerializer.new(@user, options).serializable_hash.merge(status), status: 200
   end
 
-
   def get_coin_data
     # conn = Faraday.new(:url => 'https://pro-api.coinmarketcap.com') do |faraday|
     #   faraday.request  :url_encoded
@@ -67,10 +66,28 @@ class User::UsersController < ApplicationController
     render head: 200
   end
 
+  def register
+    @user = User.new(user_params)
+    if @user.save
+      @user.create_portfolio_default
+      render json: {
+          data: {
+              messages: "Created User successfully"
+          }
+      },status: 200
+    else
+      render json: {
+          data: {
+              messages: @user.errors.full_messages
+          }
+      }, status: 422
+    end
+  end
+
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :password)
   end
 
 end
