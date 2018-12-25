@@ -35,7 +35,7 @@ class User::CrytocurrenciesController < ApplicationController
       price_btc = data["price_btc"].last(90)
       price_usd = data["price_usd"].last(90)
       raw_data = []
-      0..89.times do |i|
+      90.times do |i|
         data = {}
         data['market_cap'] = marketcap_90days[i][1]
         data['btc_cost'] = price_btc[i][1]
@@ -84,5 +84,37 @@ class User::CrytocurrenciesController < ApplicationController
     render json: {
         data: data_chart
     }, status: 200
+  end
+
+  def update_data_quantity
+    data_chart = ActiveRecord::Base.connection.exec_query("
+    SELECT crytocurrencies.symbol, AVG(crypto_trading_infos.market_cap) as average_market_cap
+    FROM crypto_trading_infos, crytocurrencies
+    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id
+    GROUP BY crytocurrencies.symbol
+    ORDER BY average_market_cap DESC LIMIT 30").to_a
+    sum_avg_market_cap = 0
+    data_chart.each do |val|
+      sum_avg_market_cap += val["average_market_cap"]
+    end
+    data_chart.each do |val|
+      cryto_trading_info = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol(val["symbol"]).id).order(created_at: :desc).limit(1).offset(89).first
+      quantity = (100*val["average_market_cap"])/(sum_avg_market_cap * cryto_trading_info.usd_cost)
+      btc_number = quantity * cryto_trading_info.btc_cost
+      QuantityValue.create(portfolio_item_id: 1, quantity: quantity, btc_number: btc_number)
+    end
+  end
+
+  def invest_trending_90days
+    sum_quantity_values = QuantityValue.limit(30).sum(:btc_number)
+    data_chart = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol('BTC').id).order(created_at: :desc).limit(90).pluck(:created_at, :usd_cost).to_h
+    data_cost_trending = data_chart.values.map { |val| val * sum_quantity_values}
+    data_day_trending = data_chart.keys
+    render json: {
+      data: {
+          invest_trending: data_cost_trending,
+          days: data_day_trending
+      }
+    }
   end
 end

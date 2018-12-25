@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_20_170151) do
+ActiveRecord::Schema.define(version: 2018_12_24_124940) do
 
   create_table "crypto_trading_infos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.float "market_cap"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2018_12_20_170151) do
     t.string "name"
     t.string "symbol"
     t.string "symbol_crypto"
+    t.integer "cryto_id"
     t.index ["portfolio_id"], name: "index_portfolio_items_on_portfolio_id"
   end
 
@@ -46,6 +47,14 @@ ActiveRecord::Schema.define(version: 2018_12_20_170151) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_portfolios_on_user_id"
+  end
+
+  create_table "quantity_values", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "portfolio_item_id"
+    t.float "quantity"
+    t.float "btc_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
