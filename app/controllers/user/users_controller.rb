@@ -79,7 +79,7 @@ class User::UsersController < ApplicationController
     else
       render json: {
           data: {
-              message: @user.errors.full_messages.join(', '),
+              messages: @user.errors.full_messages.join(', '),
               status_code: 422
           }
       }, status: 422
