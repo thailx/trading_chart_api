@@ -47,6 +47,11 @@ class User::PortfoliosController < ApplicationController
   end
 
   def delete_portfolio_item
+    if @portfolio.default_portfolio
+      return render json: {
+          message: 'Cannot delete item of default portfolio'
+      }, status: 422
+    end
     @portfolio.portfolio_items.where(id: portfolio_item_delete_params[:portfolio_item_id]).delete_all
     render json: {
         message: "Delete successfully"
