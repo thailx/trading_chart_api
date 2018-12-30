@@ -10,7 +10,7 @@ class User::UsersController < ApplicationController
           status: 200
       }
     else
-      render json: {"messages": @user.errors.full_messages},status: 200
+      render json: {"messages": @user.errors.full_messages},status: 422
     end
   end
 
@@ -72,13 +72,15 @@ class User::UsersController < ApplicationController
       @user.create_portfolio_default
       render json: {
           data: {
-              messages: "Created User successfully"
+              messages: "Created User successfully",
+              status_code: 422
           }
       },status: 200
     else
       render json: {
           data: {
-              messages: @user.errors.full_messages
+              message: @user.errors.full_messages.join(', '),
+              status_code: 422
           }
       }, status: 422
     end

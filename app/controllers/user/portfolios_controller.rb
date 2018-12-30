@@ -10,7 +10,10 @@ class User::PortfoliosController < ApplicationController
       }
       render json: PortfolioSerializer.new(@portfolio).serializable_hash.merge(status)
     else
-      render json: @portfolio.errors.full_messages, status: 422
+      render json: {
+          messages: @portfolio.errors.full_messages,
+          status_code: 422
+      }, status: 422
     end
   end
 
@@ -42,19 +45,21 @@ class User::PortfoliosController < ApplicationController
       }
       render json: PortfolioSerializer.new(@portfolio, options).serializable_hash.merge(status)
     else
-      render json: {message: "Create portfolio fail"}, status: 422
+      render json: {messages: "Create portfolio fail", status_code: 422}, status: 422
     end
   end
 
   def delete_portfolio_item
     if @portfolio.default_portfolio
       return render json: {
-          message: 'Cannot delete item of default portfolio'
+          messages: 'Cannot delete item of default portfolio',
+          status_code: 422
       }, status: 422
     end
     @portfolio.portfolio_items.where(id: portfolio_item_delete_params[:portfolio_item_id]).delete_all
     render json: {
-        message: "Delete successfully"
+        messages: "Delete successfully",
+        status_code: 200
     }, status: 200
   end
 
