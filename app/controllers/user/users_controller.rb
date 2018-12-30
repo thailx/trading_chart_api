@@ -73,7 +73,7 @@ class User::UsersController < ApplicationController
       render json: {
           data: {
               messages: "Created User successfully",
-              status_code: 422
+              status_code: 200
           }
       },status: 200
     else
