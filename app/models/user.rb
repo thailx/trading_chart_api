@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
     sql_insert_body_portfolio_items = []
     sum_avg_market_cap = 0
     data_chart.each do |val|
-      sql_insert_body_portfolio_items << "(#{default_portfolio.id}, 'CCCAGG:#{val["symbol"]}/USD', 'CCCAGG:#{val["symbol"]}/USD', '#{val["symbol"]}', '#{val["id"]}' , CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+      sql_insert_body_portfolio_items << "(#{default_portfolio.id}, '#{val["symbol"]}', 'CCCAGG:#{val["symbol"]}/USD', '#{val["symbol"]}', '#{val["id"]}' , CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
       sum_avg_market_cap += val["average_market_cap"]
     end
     ActiveRecord::Base.connection.exec_query(sql_insert_header_portfolio_items + sql_insert_body_portfolio_items.join(','))
