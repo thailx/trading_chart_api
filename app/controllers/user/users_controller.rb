@@ -79,7 +79,6 @@ class User::UsersController < ApplicationController
   def register
     @user = User.new(user_params)
     if @user.save
-      @user.create_portfolio_default
       render json: {
           data: {
               messages: "Created User successfully",
