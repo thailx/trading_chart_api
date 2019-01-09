@@ -15,7 +15,7 @@ class User::UsersController < ApplicationController
   end
 
   def index
-    @users = User.all.includes(:portfolios)
+    @users = User.all.includes(:portfolios).where(is_admin: false)
     status = {
         status_code: 200
     }
@@ -29,7 +29,17 @@ class User::UsersController < ApplicationController
     status = {
         status_code: 200
     }
-    render json: UserSerializer.new(@user, options).serializable_hash.merge(status), status: 200
+    data =  UserSerializer.new(@user).serializable_hash.merge(status)
+    unless User.find(params[:id])&.is_admin
+      admin_portfolio = Portfolio.where(default_portfolio: true, user_id: User.where(is_admin: true))
+      admin_portfolio_serializer = PortfolioSerializer.new(admin_portfolio).serializable_hash
+      admin_portfolio.each do |val|
+        data[:data][:relationships][:portfolios][:data].push({id: val.id, type: "portfolio"})
+      end
+      data[:included]= [] if data[:included].nil?
+      data[:included].push(*admin_portfolio_serializer[:data])
+    end
+    render json: data, status: 200
   end
 
   def get_coin_data

@@ -1,0 +1,14 @@
+# bundle exec sidekiq -C config/sidekiq.yml                                                                                                                   
+:concurrency: 5
+:pidfile: tmp/pids/sidekiq.pid
+development:
+  :concurrency: 5
+staging:
+  :concurrency: 5
+production:
+  :concurrency: 5
+  :logfile: ./log/sidekiq.log
+:queues:
+  - critical
+  - default
+  - low

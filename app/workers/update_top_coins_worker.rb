@@ -1,14 +1,8 @@
-class User < ActiveRecord::Base
-  attr_accessor :login
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :rememberable,
-         :trackable, :validatable, authentication_keys: [:login]
-  include DeviseTokenAuth::Concerns::User
-  has_many :portfolios
+class UpdateTopCoinsfoWorker
+  include Sidekiq::Worker
 
-  def create_portfolio_default
-    default_portfolio = Portfolio.create(name: 'Default Portfolio Top 30', user_id: 1, default_portfolio: true)
+  def perform(*args)
+    default_portfolio = Portfolio.create(name: 'Default Portfolio Top 30', user_id: self.id, default_portfolio: true)
     data_chart = ActiveRecord::Base.connection.exec_query("
     SELECT crytocurrencies.symbol, crytocurrencies.id, AVG(crypto_trading_infos.market_cap) as average_market_cap
     FROM crypto_trading_infos, crytocurrencies

@@ -1,0 +1,8 @@
+update_trading_info:
+  cron: "1 0 * * *"
+  class: "UpdateCryptoTradingInfoWorker"
+  queue: critical
+update_top_coins:
+  cron: "1 0 1 */2 *"
+  class: "UpdateTopCoinsWorker"
+  queue: critical

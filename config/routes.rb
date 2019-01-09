@@ -1,4 +1,9 @@
+require 'sidekiq/web'
+require 'sidekiq/cron/web'
+
 Rails.application.routes.draw do
+
+  mount Sidekiq::Web => '/sidekiq'
 
   mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks], controllers: {
       sessions: 'devise_token_auth/user_sessions'

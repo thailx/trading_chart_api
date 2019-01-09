@@ -37,6 +37,10 @@ gem 'fast_jsonapi'
 # HTTP Party
 gem 'faraday'
 
+# Background Job
+gem "sidekiq"
+gem "sidekiq-cron"
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
