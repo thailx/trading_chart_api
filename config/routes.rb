@@ -26,9 +26,7 @@ Rails.application.routes.draw do
     resources :crytocurrencies, only: :index do
       collection do
         get :invest_trending_90days
-        get :update_data_quantity
         get :get_all_trading_info
-        get :data_for_table_sum_chart
       end
     end
   end

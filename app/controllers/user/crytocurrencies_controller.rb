@@ -1,4 +1,6 @@
 class User::CrytocurrenciesController < ApplicationController
+  before_action :authenticate_user!, except: [:index]
+
   def index
     if params[:symbol]
       @data = Crytocurrency.where('symbol LIKE ?', "%#{params[:symbol]}%")
