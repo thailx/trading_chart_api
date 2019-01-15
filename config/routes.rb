@@ -11,12 +11,6 @@ Rails.application.routes.draw do
   post 'auth/sign_up', to: 'user/users#register'
 
   namespace :user, path: '/' do
-    resources :users, only: [:show, :index] do
-      collection do
-        get :get_coin_data
-      end
-    end
-
     resources :portfolios, only: [:index, :create, :show] do
       collection do
         get :public_portfolios

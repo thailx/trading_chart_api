@@ -1,5 +1,5 @@
 class User::PortfoliosController < ApplicationController
-  before_action :authenticate_user!, except: [:public_portfolios, :show, :data_ninety_days]
+  before_action :authenticate_user!, except: [:public_portfolios, :show, :data_ninety_days, :get_sum_of_day]
   before_action :find_portfolio, only: [:show, :data_ninety_days, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
 
   def create

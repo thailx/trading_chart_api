@@ -53,34 +53,4 @@ class User::CrytocurrenciesController < ApplicationController
     end
     render head: 200
   end
-
-  def data_for_table_sum_chart
-    data_chart = ActiveRecord::Base.connection.exec_query("
-    SELECT crytocurrencies.symbol, SUM(crypto_trading_infos.market_cap) as sum_market_cap, AVG(crypto_trading_infos.market_cap) as average_market_cap, crypto_trading_infos.cryto_id
-    FROM crypto_trading_infos, crytocurrencies
-    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id
-    GROUP BY crypto_trading_infos.cryto_id
-    ORDER BY sum_market_cap DESC
-    LIMIT 30").to_a
-    coins_array = []
-    data_chart.each do |val|
-      coins_array << val["symbol"]
-    end
-    conn = Faraday.new(:url => 'https://min-api.cryptocompare.com') do |faraday|
-      faraday.request  :url_encoded
-      faraday.response :logger
-      faraday.adapter  Faraday.default_adapter
-    end
-    response = conn.get do |req|
-      req.url "/data/pricemultifull?fsyms=#{coins_array.join(',')}&tsyms=USD&api_key=cb9f2cbd3191be2732b45facb609f2638d091fcdc818433aea6e4c626457cd00"
-    end
-    current_value = JSON.parse(response.body)
-    data_chart.each do |val|
-      current_price = current_value["RAW"].has_key?(val["symbol"]) ? current_value["RAW"][val["symbol"]]["USD"]["PRICE"] : nil
-      val.merge!({ current_price: current_price})
-    end
-    render json: {
-        data: data_chart
-    }, status: 200
-  end
 end
