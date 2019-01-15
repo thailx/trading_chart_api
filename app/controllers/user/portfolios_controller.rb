@@ -36,8 +36,9 @@ class User::PortfoliosController < ApplicationController
   end
 
   def public_portfolios
-    @portfolios = Portfolio.where(default_portfolio: true)
+    @portfolios = Portfolio.includes(:portfolio_items).where(default_portfolio: true)
     options = {}
+    options[:include] = [:portfolio_items]
     status = {
         status_code: 200
     }
