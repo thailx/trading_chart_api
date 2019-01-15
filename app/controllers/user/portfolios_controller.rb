@@ -1,5 +1,5 @@
 class User::PortfoliosController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:public_portfolios, :show, :data_ninety_days]
   before_action :find_portfolio, only: [:show, :data_ninety_days, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
 
   def create
@@ -28,6 +28,15 @@ class User::PortfoliosController < ApplicationController
 
   def index
     @portfolios = Portfolio.all.includes(:user)
+    options = {}
+    status = {
+        status_code: 200
+    }
+    render json: PortfolioSerializer.new(@portfolios, options).serializable_hash.merge(status)
+  end
+
+  def public_portfolios
+    @portfolios = Portfolio.where(default_portfolio: true)
     options = {}
     status = {
         status_code: 200

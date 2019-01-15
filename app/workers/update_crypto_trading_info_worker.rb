@@ -1,9 +1,9 @@
 class UpdateCryptoTradingInfoWorker
   include Sidekiq::Worker
 
-  def perform(*args)
+  def perform(offset)
     # Do something
-    cryptocurrencies = Crytocurrency.limit(30)
+    cryptocurrencies = Crytocurrency.limit(10).offset(offset)
     cryptocurrencies.each do |crypto|
       conn = Faraday.new(:url => 'https://graphs2.coinmarketcap.com/') do |faraday|
         faraday.request  :url_encoded

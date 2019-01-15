@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     end
 
     resources :portfolios, only: [:index, :create, :show] do
+      collection do
+        get :public_portfolios
+      end
       member do
         post :add_portfolio_item
         delete :delete_portfolio_item
