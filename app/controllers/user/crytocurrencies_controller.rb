@@ -1,5 +1,5 @@
 class User::CrytocurrenciesController < ApplicationController
-  before_action :authenticate_user!, except: [:index]
+  before_action :authenticate_user!, except: [:index, :top_100_coins, :get_all_trading_info]
 
   def index
     if params[:symbol]
@@ -14,7 +14,7 @@ class User::CrytocurrenciesController < ApplicationController
   end
 
   def get_all_trading_info
-    cryptocurrencies = Crytocurrency.limit(30)
+    cryptocurrencies = Crytocurrency.limit(100).offset(67)
     cryptocurrencies.each do |crypto|
       conn = Faraday.new(:url => 'https://graphs2.coinmarketcap.com/') do |faraday|
         faraday.request  :url_encoded
@@ -30,8 +30,9 @@ class User::CrytocurrenciesController < ApplicationController
       end
       conn.headers['referer'] = "https://coinmarketcap.com/currencies/#{crypto.description.downcase.split(' ').join('-')}/"
       response = conn.get do |req|
-        req.url "/currencies/#{crypto.description.downcase.split(' ').join('-')}/"
+        req.url "/currencies/#{crypto.description.downcase}/"
       end
+      next if response.status != 200
       data = JSON.parse(response.body)
       marketcap_90days = data["market_cap_by_available_supply"].last(90)
       price_btc = data["price_btc"].last(90)
@@ -55,4 +56,27 @@ class User::CrytocurrenciesController < ApplicationController
     end
     render head: 200
   end
+
+  def top_100_coins
+    conn = Faraday.new(:url => 'https://pro-api.coinmarketcap.com/') do |faraday|
+      faraday.request  :url_encoded
+      faraday.headers['Content-Type'] = 'application/json'
+      faraday.headers['X-CMC_PRO_API_KEY'] = 'd087ad99-3ded-48d2-8913-5b662a697f93'
+
+      faraday.adapter  Faraday.default_adapter
+    end
+    response = conn.get do |req|
+      req.url "/v1/cryptocurrency/listings/latest?limit=100"
+    end
+    data = JSON.parse(response.body)
+    data['data'].each do |val|
+      Crytocurrency.create(cryto_name: val['name'],
+                           symbol: val['symbol'],
+                           description: val['slug'],
+                           market: ["CCCAGG:#{val['symbol']}/USD"]
+                           )
+    end
+    render head: 200
+  end
+
 end

@@ -3,7 +3,7 @@ class User::PortfoliosController < ApplicationController
   before_action :find_portfolio, only: [:show, :data_ninety_days, :add_portfolio_item, :get_sum_of_day, :delete_portfolio_item]
 
   def create
-    @portfolio = Portfolio.new(portfolio_params)
+    @portfolio = @current_user.portfolio.new(portfolio_params)
     if @portfolio.save
       status = {
           status_code: 200
@@ -27,7 +27,7 @@ class User::PortfoliosController < ApplicationController
   end
 
   def index
-    @portfolios = Portfolio.all.includes(:user)
+    @portfolios = @current_user.portfolios
     options = {}
     status = {
         status_code: 200
@@ -110,15 +110,23 @@ class User::PortfoliosController < ApplicationController
 
   def data_ninety_days
     return render json: { message: "Can't get data 90 days"}, status: 404 unless @portfolio.default_portfolio
-    quantity = QuantityValue.where(portfolio_item_id: @portfolio.portfolio_items.ids).sum(:btc_number)
-    quantity = quantity * params[:invest_number].to_i / 100 if params[:invest_number]
-    btc_cost = CryptoTradingInfo.where(btc_cost: 1).order(created_at: :desc).limit(90).pluck(:created_at, :usd_cost).to_h
+    raw_data = @portfolio.data_90_days
+    created_at = []
+    current_invest = []
+    raw_data.reverse.each do |val|
+      created_at << val["insert_day"]
+      current_invest << val["total"]
+    end
     render json: {
         data: {
-            created_at: btc_cost&.keys || [],
-            current_invest: btc_cost&.values.map { |v| v * quantity} || []
+            created_at: created_at,
+            current_invest: current_invest
         }
     }, status: 200
+  end
+
+  def new_data_ninety_days
+
   end
 
   private

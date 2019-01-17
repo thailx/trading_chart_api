@@ -25,8 +25,8 @@ Rails.application.routes.draw do
 
     resources :crytocurrencies, only: :index do
       collection do
-        get :invest_trending_90days
         get :get_all_trading_info
+        get :top_100_coins
       end
     end
   end
