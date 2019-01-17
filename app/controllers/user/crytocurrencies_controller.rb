@@ -14,7 +14,7 @@ class User::CrytocurrenciesController < ApplicationController
   end
 
   def get_all_trading_info
-    cryptocurrencies = Crytocurrency.limit(100).offset(67)
+    cryptocurrencies = Crytocurrency.limit(30).offset(87)
     cryptocurrencies.each do |crypto|
       conn = Faraday.new(:url => 'https://graphs2.coinmarketcap.com/') do |faraday|
         faraday.request  :url_encoded
@@ -28,28 +28,40 @@ class User::CrytocurrenciesController < ApplicationController
         faraday.response :logger
         faraday.adapter  Faraday.default_adapter
       end
-      conn.headers['referer'] = "https://coinmarketcap.com/currencies/#{crypto.description.downcase.split(' ').join('-')}/"
+      conn.headers['referer'] = "https://coinmarketcap.com/currencies/#{crypto.description.downcase}/1539793445000/1547742245000/"
       response = conn.get do |req|
-        req.url "/currencies/#{crypto.description.downcase}/"
+        req.url "/currencies/#{crypto.description.downcase}/1539793445000/1547742245000/"
       end
       next if response.status != 200
       data = JSON.parse(response.body)
-      marketcap_90days = data["market_cap_by_available_supply"].last(90)
-      price_btc = data["price_btc"].last(90)
-      price_usd = data["price_usd"].last(90)
+      length = data["market_cap_by_available_supply"].length
+      marketcap_90days = data["market_cap_by_available_supply"]
+      price_btc = data["price_btc"]
+      price_usd = data["price_usd"]
       raw_data = []
-      90.times do |i|
+      length.times do |i|
         data = {}
         data['market_cap'] = marketcap_90days[i][1]
         data['btc_cost'] = price_btc[i][1]
         data['usd_cost'] = price_usd[i][1]
-        data['created_at'] = Time.at(marketcap_90days[i][0]/1000)
+        data['created_at'] = Time.at(marketcap_90days[i][0]/1000).strftime('%Y-%m-%d')
+        # next if data['created_at'] = '2019-01-18'
         raw_data << data
       end
       sql_header_insert = "INSERT INTO crypto_trading_infos (market_cap, btc_cost, usd_cost, cryto_id, created_at, updated_at) VALUES "
       sql_body_insert = []
-      raw_data.each do |val|
-        sql_body_insert << "( #{val['market_cap']}, #{val['btc_cost']}, #{val['usd_cost']}, #{crypto.id}, '#{val['created_at'].strftime("%Y-%m-%d %H:%M:%S")}', CURRENT_TIMESTAMP)"
+      raw_data = raw_data.group_by { |val| val['created_at']}
+      raw_data.each do |key, val|
+        avg_usd_cost = 0
+        avg_btc_cost = 0
+        avg_market_cap = 0
+        count = val.length
+        val.each do |v|
+          avg_usd_cost = avg_usd_cost  + v['usd_cost']
+          avg_btc_cost = avg_btc_cost + v['btc_cost']
+          avg_market_cap = avg_market_cap + v['market_cap']
+        end
+        sql_body_insert << "( #{avg_market_cap/count}, #{avg_btc_cost/count}, #{avg_usd_cost/count}, #{crypto.id}, '#{key}', CURRENT_TIMESTAMP)"
       end
       sql_insert = sql_header_insert + sql_body_insert.join(',')
       ActiveRecord::Base.connection.exec_query(sql_insert)
