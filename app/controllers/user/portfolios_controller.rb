@@ -125,10 +125,6 @@ class User::PortfoliosController < ApplicationController
     }, status: 200
   end
 
-  def new_data_ninety_days
-
-  end
-
   private
 
   def find_portfolio
