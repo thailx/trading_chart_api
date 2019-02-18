@@ -113,10 +113,11 @@ class User::PortfoliosController < ApplicationController
     raw_data = @portfolio.data_90_days
     created_at = []
     current_invest = []
-    raw_data.reverse.each do |val|
+    raw_data.reverse.each_with_index do |val, index|
       created_at << val["insert_day"]
       current_invest << val["total"]
     end
+    current_invest[-1] = 100
     render json: {
         data: {
             created_at: created_at,
