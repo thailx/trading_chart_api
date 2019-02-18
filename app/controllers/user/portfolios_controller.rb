@@ -113,7 +113,7 @@ class User::PortfoliosController < ApplicationController
     raw_data = @portfolio.data_90_days
     created_at = []
     current_invest = []
-    raw_data.reverse.each_with_index do |val, index|
+    raw_data.reverse.each do |val|
       created_at << val["insert_day"]
       current_invest << val["total"]
     end
