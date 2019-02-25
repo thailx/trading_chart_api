@@ -14,7 +14,7 @@ class User::CrytocurrenciesController < ApplicationController
   end
 
   def get_all_trading_info
-    cryptocurrencies = Crytocurrency.limit(30).offset(87)
+    cryptocurrencies = Crytocurrency.limit(15).offset(100)
     cryptocurrencies.each do |crypto|
       conn = Faraday.new(:url => 'https://graphs2.coinmarketcap.com/') do |faraday|
         faraday.request  :url_encoded
@@ -30,7 +30,7 @@ class User::CrytocurrenciesController < ApplicationController
       end
       conn.headers['referer'] = "https://coinmarketcap.com/currencies/#{crypto.description.downcase}/1539793445000/1547742245000/"
       response = conn.get do |req|
-        req.url "/currencies/#{crypto.description.downcase}/1539793445000/1547742245000/"
+        req.url "/currencies/#{crypto.description.downcase}/1539388800000/1539705600000/"
       end
       next if response.status != 200
       data = JSON.parse(response.body)
@@ -51,6 +51,7 @@ class User::CrytocurrenciesController < ApplicationController
       sql_header_insert = "INSERT INTO crypto_trading_infos (market_cap, btc_cost, usd_cost, cryto_id, created_at, updated_at) VALUES "
       sql_body_insert = []
       raw_data = raw_data.group_by { |val| val['created_at']}
+      next if raw_data.empty?
       raw_data.each do |key, val|
         avg_usd_cost = 0
         avg_btc_cost = 0
@@ -78,7 +79,7 @@ class User::CrytocurrenciesController < ApplicationController
       faraday.adapter  Faraday.default_adapter
     end
     response = conn.get do |req|
-      req.url "/v1/cryptocurrency/listings/latest?limit=100"
+      req.url "/v1/cryptocurrency/listings/latest?limit=105"
     end
     data = JSON.parse(response.body)
     data['data'].each do |val|

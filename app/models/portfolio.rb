@@ -4,7 +4,7 @@ class Portfolio < ApplicationRecord
 
   def data_90_days
     ActiveRecord::Base.connection.exec_query(
-    "SELECT SUM(C.current_day_cost) AS total, C.insert_day FROM
+    "SELECT ROUND(SUM(C.current_day_cost), 8) AS total, C.insert_day FROM
     (SELECT QV.quantity*CTI.usd_cost AS current_day_cost, DATE_FORMAT(CTI.created_at, '%Y-%m-%d') AS insert_day, PI.cryto_id FROM quantity_values QV
     INNER JOIN portfolio_items PI
     ON PI.id = QV.portfolio_item_id

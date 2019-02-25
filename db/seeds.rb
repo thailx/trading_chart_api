@@ -38,8 +38,8 @@ portfolio_item_ids = default_portfolio.portfolio_items.ids
 sql_insert_header_quantity = "INSERT INTO quantity_values (portfolio_item_id, quantity, btc_number, created_at, updated_at) VALUES "
 sql_insert_body_quantity = []
 data_chart.each_with_index do |val, index|
-  cryto_trading_info = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol(val["symbol"]).id).where("DATE(created_at) = ?", '2019-02-14').first
-  quantity = (100*val["average_market_cap"])/(sum_avg_market_cap * cryto_trading_info.usd_cost)
+  cryto_trading_info = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol(val["symbol"]).id).where("DATE(created_at) = ?", '2019-01-14').first
+  quantity = ((100*val["average_market_cap"])/(sum_avg_market_cap * cryto_trading_info.usd_cost)).round(8)
   btc_number = quantity * cryto_trading_info.btc_cost
   sql_insert_body_quantity << "(#{portfolio_item_ids[index]}, #{quantity}, #{btc_number}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
 end
@@ -67,9 +67,9 @@ portfolio_item_ids = default_portfolio.portfolio_items.ids
 sql_insert_header_quantity = "INSERT INTO quantity_values (portfolio_item_id, quantity, btc_number, created_at, updated_at) VALUES "
 sql_insert_body_quantity = []
 data_chart.each_with_index do |val, index|
-  cryto_trading_info = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol(val["symbol"]).id).where("DATE(created_at) = ?", '2019-02-14').first
+  cryto_trading_info = CryptoTradingInfo.where(cryto_id: Crytocurrency.find_by_symbol(val["symbol"]).id).where("DATE(created_at) = ?", '2019-01-14').first
   puts val["symbol"] if cryto_trading_info.nil?
-  quantity = (100*val["average_market_cap"])/(sum_avg_market_cap * cryto_trading_info.usd_cost)
+  quantity = ((100*val["average_market_cap"])/(sum_avg_market_cap * cryto_trading_info.usd_cost)).round(8)
   btc_number = quantity * cryto_trading_info.btc_cost
   sql_insert_body_quantity << "(#{portfolio_item_ids[index]}, #{quantity}, #{btc_number}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
 end
