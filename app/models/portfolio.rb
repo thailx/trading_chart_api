@@ -10,7 +10,7 @@ class Portfolio < ApplicationRecord
     ON PI.id = QV.portfolio_item_id
     INNER JOIN crypto_trading_infos CTI
     ON CTI.cryto_id = PI.cryto_id
-    WHERE PI.portfolio_id = #{self.id} AND CTI.created_at > DATE_SUB(NOW(), INTERVAL 90 DAY)) AS C
+    WHERE PI.portfolio_id = #{self.id} AND (DATE(CTI.created_at) BETWEEN DATE(QV.created_at) AND DATE_ADD(QV.created_at, INTERVAL 89 DAY))) AS C
     GROUP BY C.insert_day").to_a
   end
 end
