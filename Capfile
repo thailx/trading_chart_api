@@ -10,6 +10,7 @@ require 'capistrano/rails/migrations'
 require 'capistrano/rbenv'
 require 'capistrano/puma'
 require 'capistrano/scm/git'
+require 'capistrano/sidekiq'
 # require 'capistrano/sidekiq/monit' #to require monit tasks # Only for capistrano3
 
 install_plugin Capistrano::SCM::Git

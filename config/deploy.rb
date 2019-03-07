@@ -11,6 +11,8 @@ set :stages, %w(production staging)
 set :repo_url,        ENV['TRADING_CHART_REPO_URL']
 set :application,     ENV['TRADING_CHART_APP_NAME']
 set :user,            ENV['TRADING_CHART_USER_DEPLOY']
+set :branch, ENV['TRADING_CHART_REPO_BRANCH']
+set :keep_releases, 5
 set :puma_threads,    [4, 16]
 # Config ruby version
 set :rbenv_type, :user # or :system, depends on your rbenv setup
@@ -34,8 +36,10 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
-set :branch, ENV['TRADING_CHART_REPO_BRANCH']
-set :keep_releases, 5
+
+## Config sidekiq
+set :sidekiq_config, "#{current_path}/config/sidekiq.yml"
+
 
 ## Linked Files & Directories (Default None):
 set :linked_files, %w{config/config.yml config/database.yml config/master.key config/nginx.conf}

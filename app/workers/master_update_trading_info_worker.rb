@@ -1,5 +1,6 @@
 class MasterUpdateTradingInfoWorker
   include Sidekiq::Worker
+  sidekiq_options retry: 5, queue: 'critical'
 
   def perform(*args)
     # Do something

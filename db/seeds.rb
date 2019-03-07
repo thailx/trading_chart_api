@@ -19,11 +19,11 @@ admin = User.where(is_admin: true).first
 
 ### Create Top 10 Portfolio Of Admin
 
-default_portfolio = Portfolio.create(name: 'Default Portfolio Top 10', user_id: admin.id, default_portfolio: true)
+default_portfolio = Portfolio.create(name: 'TaiFu™ 10 Cryptocurrency Market Index', user_id: admin.id, default_portfolio: true)
 data_chart = ActiveRecord::Base.connection.exec_query("
     SELECT crytocurrencies.symbol, crytocurrencies.id, AVG(crypto_trading_infos.market_cap) as average_market_cap
     FROM crypto_trading_infos, crytocurrencies
-    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND crypto_trading_infos.created_at > DATE_SUB('2019-01-14', INTERVAL 3 MONTH)
+    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND DATE(crypto_trading_infos.created_at) BETWEEN DATE_SUB('2019-01-14', INTERVAL 89 DAY) AND '2019-01-14'
     GROUP BY crytocurrencies.id
     ORDER BY average_market_cap DESC LIMIT 10").to_a
 sql_insert_header_portfolio_items = "INSERT INTO portfolio_items (portfolio_id, name, symbol, symbol_crypto, cryto_id, created_at, updated_at) VALUES "
@@ -47,11 +47,11 @@ ActiveRecord::Base.connection.exec_query(sql_insert_header_quantity + sql_insert
 
 ### Create Top 30 Portfolio Of Admin
 
-default_portfolio = Portfolio.create(name: 'Default Portfolio Top 30', user_id: admin.id, default_portfolio: true)
+default_portfolio = Portfolio.create(name: 'TaiFu™ 30 Cryptocurrency Market Index', user_id: admin.id, default_portfolio: true)
 data_chart = ActiveRecord::Base.connection.exec_query("
     SELECT crytocurrencies.symbol, crytocurrencies.id, AVG(crypto_trading_infos.market_cap) as average_market_cap
     FROM crypto_trading_infos, crytocurrencies
-    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND crypto_trading_infos.created_at > DATE_SUB('2019-01-14', INTERVAL 3 MONTH)
+    WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND DATE(crypto_trading_infos.created_at) BETWEEN DATE_SUB('2019-01-14', INTERVAL 89 DAY) AND '2019-01-14'
     GROUP BY crytocurrencies.id
     ORDER BY average_market_cap DESC LIMIT 30").to_a
 sql_insert_header_portfolio_items = "INSERT INTO portfolio_items (portfolio_id, name, symbol, symbol_crypto, cryto_id, created_at, updated_at) VALUES "
