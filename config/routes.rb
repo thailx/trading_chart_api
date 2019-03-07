@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :portfolios, only: [:index, :create, :show] do
       collection do
         get :public_portfolios
+        post :upload
       end
       member do
         post :add_portfolio_item

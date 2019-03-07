@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_09_152322) do
+ActiveRecord::Schema.define(version: 2019_03_07_153930) do
 
   create_table "crypto_trading_infos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.float "market_cap"
-    t.float "btc_cost"
-    t.float "usd_cost"
+    t.float "market_cap", limit: 53
+    t.float "btc_cost", limit: 53
+    t.float "usd_cost", limit: 53
     t.integer "cryto_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -52,8 +52,8 @@ ActiveRecord::Schema.define(version: 2019_01_09_152322) do
 
   create_table "quantity_values", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "portfolio_item_id"
-    t.float "quantity"
-    t.float "btc_number"
+    t.float "quantity", limit: 53
+    t.float "btc_number", limit: 53
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

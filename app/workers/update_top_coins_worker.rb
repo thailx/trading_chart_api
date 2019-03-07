@@ -10,7 +10,7 @@ class UpdateTopCoinsWorker
       data_chart = ActiveRecord::Base.connection.exec_query("
       SELECT crytocurrencies.symbol, crytocurrencies.id, AVG(crypto_trading_infos.market_cap) as average_market_cap
       FROM crypto_trading_infos, crytocurrencies
-      WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND crypto_trading_infos.created_at >= NOW() - INTERVAL 90 DAY
+      WHERE crypto_trading_infos.cryto_id = crytocurrencies.id AND DATE(crypto_trading_infos.created_at) BETWEEN DATE_SUB(NOW(), INTERVAL 89 DAY) AND DATE(NOW())
       GROUP BY crytocurrencies.id
       ORDER BY average_market_cap DESC LIMIT #{count_portfolio_items}").to_a
       sql_insert_header_portfolio_items = "INSERT INTO portfolio_items (portfolio_id, name, symbol, symbol_crypto, cryto_id, created_at, updated_at) VALUES "
