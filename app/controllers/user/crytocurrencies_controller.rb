@@ -14,7 +14,7 @@ class User::CrytocurrenciesController < ApplicationController
   end
 
   def get_all_trading_info
-    cryptocurrencies = Crytocurrency.limit(15).offset(100)
+    cryptocurrencies = Crytocurrency.limit(10).offset(0)
     cryptocurrencies.each do |crypto|
       conn = Faraday.new(:url => 'https://graphs2.coinmarketcap.com/') do |faraday|
         faraday.request  :url_encoded
@@ -30,7 +30,7 @@ class User::CrytocurrenciesController < ApplicationController
       end
       conn.headers['referer'] = "https://coinmarketcap.com/currencies/#{crypto.description.downcase}/1539793445000/1547742245000/"
       response = conn.get do |req|
-        req.url "/currencies/#{crypto.description.downcase}/1539388800000/1539705600000/"
+        req.url "/currencies/#{crypto.description.downcase}/1539388800000/1552003200000/"
       end
       next if response.status != 200
       data = JSON.parse(response.body)

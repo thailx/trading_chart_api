@@ -4,7 +4,7 @@ class MasterUpdateTradingInfoWorker
 
   def perform(*args)
     # Do something
-    count_crypto = cryptocurrencies.count
+    count_crypto = Crytocurrency.count
     total_pages = (count_crypto / 10) + 1
     total_pages.times do |i|
       offset = i * 10
