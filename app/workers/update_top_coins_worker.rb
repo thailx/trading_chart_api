@@ -6,7 +6,8 @@ class UpdateTopCoinsWorker
     default_portfolios.each do |default_portfolio|
       sum_btc_after_90ds = QuantityValue.where(portfolio_item_id: default_portfolio.portfolio_items.ids).sum(:btc_number)
       count_portfolio_items = default_portfolio.portfolio_items.count
-      default_portfolio.portfolio_items.delete_all
+      QuantityValue.where(portfolio_item_id: default_portfolio.portfolio_items.pluck(:id)).delete_all
+      PortfolioItem.where(portfolio_id: default_portfolio.id).delete_all
       data_chart = ActiveRecord::Base.connection.exec_query("
       SELECT crytocurrencies.symbol, crytocurrencies.id, AVG(crypto_trading_infos.market_cap) as average_market_cap
       FROM crypto_trading_infos, crytocurrencies
