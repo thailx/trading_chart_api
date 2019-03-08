@@ -23,7 +23,7 @@ class UpdateCryptoTradingInfoWorker
     data_btc = JSON.parse(response_btc.body)
     cryptocurrencies.each do |val|
       CryptoTradingInfo.create(
-                           marketcap: data_usd['data'][val.symbol]['quote']['USD']['market_cap'],
+                           market_cap: data_usd['data'][val.symbol]['quote']['USD']['market_cap'],
                            usd_cost: data_usd['data'][val.symbol]['quote']['USD']['price'],
                            btc_cost: data_btc['data'][val.symbol]['quote']['BTC']['price'],
                            cryto_id: val.id
